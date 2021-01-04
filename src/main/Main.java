@@ -1,9 +1,7 @@
 package main;
 
 import org.antlr.v4.runtime.*;
-import java.io.IOException;
 import java.io.InputStream;
-
 import gen.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -24,10 +22,23 @@ public class Main {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         HaveFunParser parser = new HaveFunParser(tokenStream);
 
+        /* Handling syntax errors */
+        parser.addErrorListener(new BaseErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer,
+                                    Object offendingSymbol,
+                                    int line,
+                                    int charPositionInLine,
+                                    String msg,
+                                    RecognitionException e) {
+                super.syntaxError(recognizer,offendingSymbol,line,charPositionInLine,msg,e);
+                System.exit(1);
+            }
+        });
+
         ParseTree parseTree = parser.prog();
 
         IntHaveFun hf = new IntHaveFun();
         hf.visit(parseTree);
-
     }
 }
