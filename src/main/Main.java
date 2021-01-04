@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         InputStream is = cl.getResourceAsStream(args[0]);
-        CharStream cs = null;
+        CharStream cs;
 
         try {
             cs = CharStreams.fromStream(is);
