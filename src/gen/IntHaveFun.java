@@ -125,7 +125,7 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
         FunValue f = (FunValue) funMem.get(id);
 
         if (f == null) {
-            HaveFunErrors.notDefined(ctx, id);
+            HaveFunErrors.notDefined(ctx, id, HaveFunErrors.FUNC);
         }
 
         HaveFunParser.FunContext funcContext = f.rawValue();
@@ -145,7 +145,8 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
 
         /* Handling scoping of function */
         memList.add(tempMem);
-        visit(funcContext.com());
+        if (funcContext.com() != null)
+            visit(funcContext.com());
         ExpValue<?> returnValue = visitExp(funcContext.exp());
         memList.removeLast();
 
@@ -232,7 +233,7 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
         String id = ctx.ID().getText();
         ExpValue<?> expValue = memList.getLast().get(id);
         if (expValue == null) {
-            HaveFunErrors.notDefined(ctx, id);
+            HaveFunErrors.notDefined(ctx, id, HaveFunErrors.VAR);
         }
         return expValue;
     }
@@ -243,7 +244,7 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
         ExpValue<?> expValue = memList.getLast().get(id);
 
         if (expValue == null) {
-            HaveFunErrors.notDefined(ctx, id);
+            HaveFunErrors.notDefined(ctx, id, HaveFunErrors.VAR);
         }
 
         if (!(expValue instanceof ArrayValue)) {
