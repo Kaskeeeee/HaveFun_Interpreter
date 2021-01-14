@@ -62,4 +62,13 @@ public class HaveFunErrors {
                 " > " + ctx.ID().getText() + "(" + ctx.args().getText() + ")");
         System.exit(1);
     }
+
+    public static void returnsVoid(HaveFunParser.FunContext ctx) {
+        System.err.println("Functions cannot return void or empty expressions:");
+        System.err.println("@" + ctx.start.getLine() + ":" + ctx.start.getCharPositionInLine() +
+                " > " + ctx.FUNC().getText() + " " + ctx.ID().getText() +
+                "(" + ctx.args().getText() + ") { ... return _ }");
+
+        System.exit(1);
+    }
 }

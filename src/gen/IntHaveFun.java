@@ -6,6 +6,7 @@ import values.*;
 import org.apache.commons.text.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Interpreter for the HaveFun language
@@ -18,13 +19,13 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
        it has been decided to separate the memories that handle functions
        and variables
      */
-    private final LinkedList<Conf> memList;     // Variables memories (List used to handle scoping)
-    private final Conf funMem;                  // Function memory
+    private final LinkedList<Conf<ExpValue<?>>> memList;  // Variables memories (List used to handle scoping)
+    private final Conf<FunValue> funMem;                  // Function memory
 
     public IntHaveFun() {
         memList = new LinkedList<>();
-        memList.add(new Conf());
-        funMem = new Conf();
+        memList.add(new Conf<>());
+        funMem = new Conf<>();
     }
 
     @Override
@@ -104,17 +105,22 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
             HaveFunErrors.funAlreadyDefined(ctx);
         }
 
+        /* Check void return */
+        if (ctx.exp() == null) {
+            HaveFunErrors.returnsVoid(ctx);
+        }
+
         /* Check if an id is used more than once for formal arguments */
-        LinkedList<String> ids = new LinkedList<>();
+        LinkedList<String> params = new LinkedList<>();
         for (TerminalNode currentId: ctx.args().ID()) {
-            if (ids.contains(currentId.getText())) {
+            if (params.contains(currentId.getText())) {
                 HaveFunErrors.argsClash(ctx, currentId.getText());
             }
 
-            ids.add(currentId.getText());
+            params.add(currentId.getText());
         }
 
-        FunValue f = new FunValue(ctx);
+        FunValue f = new FunValue(id, params, ctx.com(), ctx.exp());
         funMem.put(id, f);
         return f;
     }
@@ -122,32 +128,31 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
     @Override
     public ExpValue<?> visitFunCall(HaveFunParser.FunCallContext ctx) {
         String id = ctx.ID().getText();
-        FunValue f = (FunValue) funMem.get(id);
+        FunValue f = funMem.get(id);
 
         if (f == null) {
             HaveFunErrors.notDefined(ctx, id, HaveFunErrors.FUNC);
         }
 
-        HaveFunParser.FunContext funcContext = f.rawValue();
-        int nParams = funcContext.args().ID().size();
+        List<String> params = f.getParams();
 
         /* Check if actual parameters are in the same number as formal parameters */
-        if (ctx.argsExp().exp().size() != nParams) {
+        if (ctx.argsExp().exp().size() != params.size()) {
             HaveFunErrors.argsMismatch(ctx);
         }
 
         /* Initialize memory used by the function called */
-        Conf tempMem = new Conf();
-        for (int arg = 0; arg < nParams; arg++) {
-            tempMem.put(funcContext.args().ID(arg).getText(),
+        Conf<ExpValue<?>> tempMem = new Conf<>();
+        for (int arg = 0; arg < params.size(); arg++) {
+            tempMem.put(params.get(arg),
                     visitExp(ctx.argsExp().exp(arg)));
         }
 
         /* Handling scoping of function */
         memList.add(tempMem);
-        if (funcContext.com() != null)
-            visit(funcContext.com());
-        ExpValue<?> returnValue = visitExp(funcContext.exp());
+        if (f.getCom() != null)
+            visit(f.getCom());
+        ExpValue<?> returnValue = visitExp(f.getReturnExp());
         memList.removeLast();
 
         return returnValue;
@@ -247,12 +252,12 @@ public class IntHaveFun extends HaveFunBaseVisitor<Value> {
             HaveFunErrors.notDefined(ctx, id, HaveFunErrors.VAR);
         }
 
-        if (!(expValue instanceof ArrayValue)) {
+        int index = visitNaturalExp(ctx.exp());
+
+        ArrayValue expValueAsArray = expValue instanceof ArrayValue ? ((ArrayValue) expValue) : null;
+        if (expValueAsArray == null) {
             HaveFunErrors.typeMismatchError(ctx, HaveFunErrors.ARRAY_ERR);
         }
-
-        int index = visitNaturalExp(ctx.exp());
-        ArrayValue expValueAsArray = ((ArrayValue) expValue);
 
         if (expValueAsArray.get(index) == null) {
             HaveFunErrors.nullArrayValue(id, index);

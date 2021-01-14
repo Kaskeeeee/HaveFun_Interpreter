@@ -1,14 +1,14 @@
 fun f(x) {
-y = 0;
-r = g(y);
-out(y);
-out(r);
-return y
+    y = 0;
+    r = g(y);
+    out(y);
+    out(r);
+    return y
 }
 fun g(x) {
-y = 10;
-out(y);
-return y
+    y = 10;
+    out(y);
+    return y
 }
 
 y = 5;

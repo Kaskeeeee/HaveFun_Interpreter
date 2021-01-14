@@ -2,7 +2,7 @@ grammar HaveFun;
 
 prog : fun* com EOF ;
 
-fun : FUNC ID LPAR args RPAR LBRACE (com SEMICOLON)? RET exp RBRACE;
+fun : FUNC ID LPAR args RPAR LBRACE (com SEMICOLON)? RET exp? RBRACE;
 
 args : | ID (',' ID)*;
 

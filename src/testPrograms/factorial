@@ -24,5 +24,5 @@ out("Risultato dell'iterativefactorial(5):\n");
 out("--> " . tostr(n) . "\n");
 s = "Risultato del recursivefactorial(5):\n";
 out(s);
-out("--> " . tostr(y))
+out("--> " . y)
 
