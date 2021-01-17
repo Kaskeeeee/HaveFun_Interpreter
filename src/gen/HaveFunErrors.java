@@ -1,8 +1,4 @@
 package gen;
-
-
-import org.antlr.v4.runtime.tree.TerminalNode;
-
 /**
  * Helper class used to handle runtime errors
  */

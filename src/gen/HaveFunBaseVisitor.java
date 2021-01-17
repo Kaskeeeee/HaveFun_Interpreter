@@ -1,4 +1,5 @@
 package gen;
+
 // Generated from D:/IdeaProjects/HaveFunLanguage/src\HaveFun.g4 by ANTLR 4.9
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

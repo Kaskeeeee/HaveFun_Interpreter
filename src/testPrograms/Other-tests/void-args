@@ -1,0 +1,23 @@
+/* Testing no args function while giving you motivation */
+
+fun thisProgramAsksHowYouDoing() {
+    out("Hi how are you?");
+    return "You look great! Keep it going"
+}
+
+fun thisProgramTriesToMotivateYou() {
+    return "I hope your code works!\nIf it doesn't I'm sure you're gonna fix it"
+}
+
+out(thisProgramAsksHowYouDoing());
+out(thisProgramTriesToMotivateYou());
+a[3] = "Hello! ";
+a[0] = "Hi! ";
+a[1] = "Greetings! ";
+a[2] = "Hola! ";
+out(a[0] . a[1] . a[2] . a[3])
+
+/* Might as well test comments */
+
+// :)
+//

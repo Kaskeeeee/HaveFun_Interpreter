@@ -46,7 +46,7 @@ PLUS  : '+' ;
 MINUS : '-';
 MUL   : '*' ;
 DIV   : '/' ;
-MOD   : '%' ;
+MOD   : 'mod' ;
 POW   : '^' ;
 
 AND : '&' ;

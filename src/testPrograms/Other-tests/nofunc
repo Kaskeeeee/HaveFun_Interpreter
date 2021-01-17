@@ -1,0 +1,4 @@
+fun x(r, w) { return r - w + y(0, 0) }
+fun y(f, g) { return 0 }
+
+out(x(12%10, 20))
